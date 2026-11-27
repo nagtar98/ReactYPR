@@ -21,21 +21,41 @@ const MODULOS_INICIALES = [
 export default function ListasYKeys() {
   const [modulos, setModulos] = useState(MODULOS_INICIALES);
   const [nuevoNombre, setNuevoNombre] = useState('');
+  const [busqueda, setBusqueda] = useState('');
+  const [errorDuplicado, setErrorDuplicado] = useState('');
 
   const agregarModulo = (e) => {
     e.preventDefault();
-    if (!nuevoNombre.trim()) return;
+    const nombre = nuevoNombre.trim();
+    if (!nombre) return;
+
+    const existe = modulos.some(
+      (modulo) => modulo.nombre.toLocaleLowerCase() === nombre.toLocaleLowerCase()
+    );
+    if (existe) {
+      setErrorDuplicado(`El módulo "${nombre}" ya existe en la lista.`);
+      return;
+    }
+    setErrorDuplicado('');
 
     const nuevo = {
       id: `mod-${Date.now()}`, // ID único estable (mejor que usar el índice del array)
       codigo: 'OPT',
-      nombre: nuevoNombre.trim(),
+      nombre,
       horas: 60
     };
     // Insertamos al principio para demostrar que React conserva la identidad de cada fila
     setModulos([nuevo, ...modulos]);
     setNuevoNombre('');
   };
+
+  const modulosFiltrados = modulos.filter((modulo) => {
+    const texto = busqueda.trim().toLocaleLowerCase();
+    return (
+      modulo.nombre.toLocaleLowerCase().includes(texto) ||
+      modulo.codigo.toLocaleLowerCase().includes(texto)
+    );
+  });
 
   const eliminarModulo = (idAEliminar) => {
     setModulos(modulos.filter((m) => m.id !== idAEliminar));
@@ -67,8 +87,30 @@ export default function ListasYKeys() {
           Invertir orden
         </button>
       </form>
+      {errorDuplicado && (
+        <p role="alert" style={{ color: '#ef4444', marginTop: '0.75rem' }}>
+          {errorDuplicado}
+        </p>
+      )}
+
+      <label htmlFor="buscar-modulo" style={{ display: 'block', marginTop: '1rem' }}>
+        Buscar módulos:
+      </label>
+      <input
+        id="buscar-modulo"
+        type="search"
+        className="input"
+        placeholder="Nombre o código..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+      />
+
+      <p style={{ margin: '0.75rem 0' }}>
+        Mostrando {modulosFiltrados.length} de {modulos.length} módulos
+      </p>
+
       <ul className="list">
-        {modulos.map((modulo) => (
+        {modulosFiltrados.map((modulo) => (
           // [CLAVE EXPOSICIÓN] La `key` va siempre en el elemento raíz del `.map()`
           <li key={modulo.id} className="list-item">
             <div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ResumenKPIs from './ResumenKPIs.jsx';
 
 // ============================================================================
 // [CLAVE EXPOSICIÓN 6] DEMO INTEGRADORA DE TODAS LAS CARACTERÍSTICAS DE JSX
@@ -168,6 +169,8 @@ export default function DemoIntegradora() {
             <button type="submit" className="btn">Dar de alta expediente</button>
           </div>
         </form>
+
+        <ResumenKPIs alumnos={listaFiltrada} />
 
         <div className="grid-2" style={{ marginBottom: '1rem' }}>
           <div>

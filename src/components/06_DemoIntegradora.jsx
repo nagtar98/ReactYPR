@@ -11,7 +11,7 @@ import { useState } from 'react';
 // - Comunicación mediante props y composición de componentes
 // ============================================================================
 
-const EXPEDIENTES = [
+const EXPEDIENTES_INICIALES = [
   { id: 101, nombre: 'Lucía Serrano', nota: 8.7, modulos: ['DI', 'PSP', 'AD'] },
   { id: 102, nombre: 'Marcos Vega', nota: 4.3, modulos: ['DI', 'SGE'] },
   { id: 103, nombre: 'Sofía Navarro', nota: 9.5, modulos: ['DI', 'PSP', 'AD', 'PMDM'] }
@@ -59,8 +59,14 @@ export default function DemoIntegradora() {
   const [seleccionado, setSeleccionado] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [orden, setOrden] = useState('nota-desc');
+  const [expedientes, setExpedientes] = useState(EXPEDIENTES_INICIALES);
+  const [formulario, setFormulario] = useState({
+    nombre: '',
+    nota: '',
+    modulos: ''
+  });
 
-  const listaFiltrada = EXPEDIENTES
+  const listaFiltrada = expedientes
     .filter((alumno) => !soloAprobados || alumno.nota >= 5)
     .filter((alumno) =>
       alumno.nombre.toLocaleLowerCase().includes(busqueda.trim().toLocaleLowerCase())
@@ -70,6 +76,31 @@ export default function DemoIntegradora() {
       if (orden === 'nombre') return a.nombre.localeCompare(b.nombre, 'es');
       return b.nota - a.nota;
     });
+
+  const actualizarFormulario = (campo, valor) => {
+    setFormulario((actual) => ({ ...actual, [campo]: valor }));
+  };
+
+  const agregarExpediente = (evento) => {
+    evento.preventDefault();
+    const nombre = formulario.nombre.trim();
+    const nota = Number(formulario.nota);
+    if (!nombre || formulario.nota === '' || nota < 0 || nota > 10) return;
+
+    const modulos = formulario.modulos
+      .split(',')
+      .map((modulo) => modulo.trim())
+      .filter(Boolean);
+    const nuevoId = expedientes.length > 0
+      ? Math.max(...expedientes.map((alumno) => Number(alumno.id) || 0)) + 1
+      : 1;
+
+    setExpedientes((actual) => [
+      ...actual,
+      { id: nuevoId, nombre, nota, modulos }
+    ]);
+    setFormulario({ nombre: '', nota: '', modulos: '' });
+  };
 
   return (
     <>
@@ -94,6 +125,49 @@ export default function DemoIntegradora() {
             </span>
           )}
         </div>
+
+        <form className="box" onSubmit={agregarExpediente} style={{ marginBottom: '1rem' }}>
+          <h3 style={{ marginTop: 0 }}>Añadir nuevo expediente</h3>
+          <div className="grid-2">
+            <div>
+              <label htmlFor="nombre-expediente">Nombre completo *</label>
+              <input
+                id="nombre-expediente"
+                className="input"
+                required
+                value={formulario.nombre}
+                onChange={(e) => actualizarFormulario('nombre', e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="nota-expediente">Nota (0-10) *</label>
+              <input
+                id="nota-expediente"
+                type="number"
+                min="0"
+                max="10"
+                step="0.1"
+                className="input"
+                required
+                value={formulario.nota}
+                onChange={(e) => actualizarFormulario('nota', e.target.value)}
+              />
+            </div>
+          </div>
+          <label htmlFor="modulos-expediente" style={{ display: 'block', marginTop: '0.75rem' }}>
+            Módulos (separados por comas)
+          </label>
+          <input
+            id="modulos-expediente"
+            className="input"
+            placeholder="DI, PSP, AD"
+            value={formulario.modulos}
+            onChange={(e) => actualizarFormulario('modulos', e.target.value)}
+          />
+          <div className="btn-row">
+            <button type="submit" className="btn">Dar de alta expediente</button>
+          </div>
+        </form>
 
         <div className="grid-2" style={{ marginBottom: '1rem' }}>
           <div>

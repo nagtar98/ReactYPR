@@ -69,7 +69,7 @@ export default function RenderizadoCondicional() {
         {/* 3. OPERADOR && — COMPARATIVA CON Y SIN LA TRAMPA DEL 0 */}
         <div className="box box-danger">
           <h3>Demostración en vivo: la Trampa del 0</h3>
-          <p style={{ fontSize: '0.88rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
             Pon el contador a <strong>0</strong> y observa la diferencia entre ambos bloques:
           </p>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // [CLAVE EXPOSICIÓN] Importación de componentes React.
 // Observa que TODOS los componentes propios empiezan por MAYÚSCULA.
@@ -21,19 +21,37 @@ const SECCIONES = [
 
 export default function App() {
   const [activa, setActiva] = useState('01');
+  const [temaOscuro, setTemaOscuro] = useState(true);
+
+  useEffect(() => {
+    document.body.classList.toggle('theme-claro', !temaOscuro);
+    document.body.classList.toggle('theme-oscuro', temaOscuro);
+    return () => {
+      document.body.classList.remove('theme-claro', 'theme-oscuro');
+    };
+  }, [temaOscuro]);
 
   // Localizamos dinámicamente el componente a renderizar según la pestaña activa
   const seccionActual = SECCIONES.find((sec) => sec.id === activa);
   const ComponenteActivo = seccionActual.componente;
 
   return (
-    <div className="layout">
+    <div className={`layout ${temaOscuro ? 'tema-oscuro' : 'tema-claro'}`}>
       <header className="header">
         <div>
           <h1>M10.2. JSX (JavaScript XML) con React</h1>
           <p>Demostración interactiva para exposición en clase · Abre los archivos de src/components/ en VS Code</p>
         </div>
-        <span className="pill">React 18 + Vite</span>
+        <div className="header-actions">
+          <span className="pill">React 18 + Vite</span>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => setTemaOscuro((actual) => !actual)}
+          >
+            {temaOscuro ? 'Modo claro' : 'Modo oscuro'}
+          </button>
+        </div>
       </header>
 
       {/* Navegación generada dinámicamente con .map() y key única */}
@@ -54,6 +72,10 @@ export default function App() {
       <main>
         <ComponenteActivo />
       </main>
+
+      <footer className="footer">
+        Ignacio Bobes Elso · M10.2 JSX · {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }

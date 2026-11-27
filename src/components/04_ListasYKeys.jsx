@@ -74,7 +74,7 @@ export default function ListasYKeys() {
             <div>
               <span className="pill" style={{ marginRight: '0.6rem' }}>{modulo.codigo}</span>
               <strong>{modulo.nombre}</strong>
-              <span style={{ color: '#94a3b8', marginLeft: '0.5rem', fontSize: '0.85rem' }}>
+              <span style={{ color: 'var(--muted)', marginLeft: '0.5rem', fontSize: '0.85rem' }}>
                 ({modulo.horas} h · key: <code className="code-inline">{modulo.id}</code>)
               </span>
             </div>

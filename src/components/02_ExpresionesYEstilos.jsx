@@ -23,7 +23,7 @@ export default function ExpresionesYEstilos() {
 
   // Objeto de estilos dinámico en JavaScript
   const estiloTarjetaDinamica = {
-    backgroundColor: '#0f172a',
+    backgroundColor: 'var(--surface-alt)',
     border: `2px solid ${colorDestacado}`,
     borderRadius: '10px',
     padding: '1rem',
@@ -69,7 +69,7 @@ export default function ExpresionesYEstilos() {
           <h3 style={{ color: colorDestacado, marginTop: 0 }}>
             Estilos en línea con style=&#123;&#123; camelCase &#125;&#125;
           </h3>
-          <p style={{ fontSize: '0.92rem', color: '#cbd5e1' }}>
+          <p style={{ fontSize: '0.92rem', color: 'var(--text)' }}>
             El borde y el título de este recuadro se calculan dinámicamente desde un objeto
             JavaScript usando <code className="code-inline">border</code> y <code className="code-inline">color</code>.
           </p>

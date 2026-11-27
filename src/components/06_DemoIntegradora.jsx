@@ -24,7 +24,7 @@ function TarjetaExpediente({ alumno, seleccionado, onSeleccionar }) {
     <article
       className="box"
       style={{
-        borderColor: seleccionado ? '#38bdf8' : '#334155',
+        borderColor: seleccionado ? '#38bdf8' : 'var(--border)',
         borderWidth: seleccionado ? '2px' : '1px'
       }}
     >

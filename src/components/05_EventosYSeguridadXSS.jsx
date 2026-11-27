@@ -41,7 +41,7 @@ export default function EventosYSeguridadXSS() {
       <div className="grid-2">
         <div className="box box-success">
           <h3>Sintaxis de Eventos (Synthetic Events)</h3>
-          <p style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text)' }}>
             Último evento: <strong style={{ color: '#38bdf8' }}>{ultimoEvento}</strong>
           </p>
           <div className="btn-row">
@@ -74,7 +74,8 @@ export default function EventosYSeguridadXSS() {
             style={{
               marginTop: '0.75rem',
               padding: '0.65rem',
-              backgroundColor: '#1e293b',
+              backgroundColor: 'var(--surface-alt)',
+              color: 'var(--text)',
               borderRadius: '8px',
               fontFamily: 'Consolas, monospace',
               fontSize: '0.85rem',

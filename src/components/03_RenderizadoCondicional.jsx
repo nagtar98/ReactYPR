@@ -50,6 +50,14 @@ export default function RenderizadoCondicional() {
         <button type="button" className="btn btn-danger" onClick={() => setNotificaciones(0)}>
           Poner a 0
         </button>
+        <button
+          type="button"
+          className="btn"
+          disabled={notificaciones === 0}
+          onClick={() => setNotificaciones(0)}
+        >
+          Marcar todas como leídas
+        </button>
       </div>
 
       <div className="grid-2">
@@ -77,9 +85,14 @@ export default function RenderizadoCondicional() {
             <strong>Incorrecto</strong> (<code className="code-inline">notificaciones &amp;&amp; ...</code>):{' '}
             {/* BUG INTENCIONADO CON FINES DIDÁCTICOS: cuando vale 0, pinta "0" */}
             <span style={{ color: '#f87171', fontWeight: 'bold' }}>
-              {notificaciones && <span>Tienes {notificaciones} avisos</span>}
+              {notificaciones > 0 && <span>Tienes {notificaciones} avisos</span>}
             </span>
           </p>
+          {notificaciones === 0 && (
+            <p style={{ marginTop: '0.75rem', color: '#34d399' }}>
+              Estás al día. No tienes notificaciones pendientes
+            </p>
+          )}
 
           <p style={{ marginTop: '0.4rem' }}>
             <strong>Correcto</strong> (<code className="code-inline">notificaciones &gt; 0 &amp;&amp; ...</code>):{' '}

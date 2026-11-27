@@ -57,10 +57,19 @@ function TarjetaExpediente({ alumno, seleccionado, onSeleccionar }) {
 export default function DemoIntegradora() {
   const [soloAprobados, setSoloAprobados] = useState(false);
   const [seleccionado, setSeleccionado] = useState(null);
+  const [busqueda, setBusqueda] = useState('');
+  const [orden, setOrden] = useState('nota-desc');
 
-  const listaFiltrada = soloAprobados
-    ? EXPEDIENTES.filter((a) => a.nota >= 5)
-    : EXPEDIENTES;
+  const listaFiltrada = EXPEDIENTES
+    .filter((alumno) => !soloAprobados || alumno.nota >= 5)
+    .filter((alumno) =>
+      alumno.nombre.toLocaleLowerCase().includes(busqueda.trim().toLocaleLowerCase())
+    )
+    .sort((a, b) => {
+      if (orden === 'nota-asc') return a.nota - b.nota;
+      if (orden === 'nombre') return a.nombre.localeCompare(b.nombre, 'es');
+      return b.nota - a.nota;
+    });
 
   return (
     <>
@@ -86,15 +95,48 @@ export default function DemoIntegradora() {
           )}
         </div>
 
-        <div className="grid-2">
-          {listaFiltrada.map((alumno) => (
-            <TarjetaExpediente
-              key={alumno.id}
-              alumno={alumno}
-              seleccionado={seleccionado?.id === alumno.id}
-              onSeleccionar={setSeleccionado}
+        <div className="grid-2" style={{ marginBottom: '1rem' }}>
+          <div>
+            <label htmlFor="buscar-expediente">Buscar por nombre:</label>
+            <input
+              id="buscar-expediente"
+              type="search"
+              className="input"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              placeholder="Ej.: Lucía"
             />
-          ))}
+          </div>
+          <div>
+            <label htmlFor="orden-expediente">Ordenar por:</label>
+            <select
+              id="orden-expediente"
+              className="input"
+              value={orden}
+              onChange={(e) => setOrden(e.target.value)}
+            >
+              <option value="nota-desc">Nota (mayor a menor)</option>
+              <option value="nota-asc">Nota (menor a mayor)</option>
+              <option value="nombre">Nombre (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid-2">
+          {listaFiltrada.length > 0 ? (
+            listaFiltrada.map((alumno) => (
+              <TarjetaExpediente
+                key={alumno.id}
+                alumno={alumno}
+                seleccionado={seleccionado?.id === alumno.id}
+                onSeleccionar={setSeleccionado}
+              />
+            ))
+          ) : (
+            <p className="box box-warn" style={{ gridColumn: '1 / -1' }}>
+              No se encontraron expedientes con esos criterios
+            </p>
+          )}
         </div>
 
         <p className="file-hint">

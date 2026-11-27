@@ -16,19 +16,31 @@ import { useState } from 'react';
 // ============================================================================
 
 export default function EventosYSeguridadXSS() {
-  const [ultimoEvento, setUltimoEvento] = useState('Ninguno todavía');
+  const [historialEventos, setHistorialEventos] = useState([]);
   const [entradaUsuario, setEntradaUsuario] = useState(
     "<img src=x onerror='alert('Ataque XSS')' /> <script>alert('Hack')</script>"
   );
 
+  const registrarEvento = (texto) => {
+    setHistorialEventos((actual) => [
+      { id: `${Date.now()}-${actual.length}`, texto },
+      ...actual
+    ].slice(0, 5));
+  };
+
   // Manejador sin parámetros (se pasa como referencia: onClick={manejarClickSimple})
   const manejarClickSimple = () => {
-    setUltimoEvento(`Clic simple registrado a las ${new Date().toLocaleTimeString()}`);
+    registrarEvento(`Clic simple registrado a las ${new Date().toLocaleTimeString()}`);
   };
 
   // Manejador con parámetros (requiere función flecha: onClick={() => manejarConParametro(...)})
   const manejarConParametro = (accion) => {
-    setUltimoEvento(`Acción ejecutada con parámetro: "${accion}"`);
+    registrarEvento(`Acción ejecutada con parámetro: "${accion}"`);
+  };
+
+  const cargarPayload = (payload) => {
+    setEntradaUsuario(payload);
+    registrarEvento('Payload XSS de prueba cargado');
   };
 
   return (
@@ -41,9 +53,18 @@ export default function EventosYSeguridadXSS() {
       <div className="grid-2">
         <div className="box box-success">
           <h3>Sintaxis de Eventos (Synthetic Events)</h3>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text)' }}>
-            Último evento: <strong style={{ color: '#38bdf8' }}>{ultimoEvento}</strong>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text)', marginBottom: '0.5rem' }}>
+            Historial de eventos:
           </p>
+          {historialEventos.length === 0 ? (
+            <p style={{ color: 'var(--muted)' }}>Ninguno todavía</p>
+          ) : (
+            <ul className="list">
+              {historialEventos.map((evento) => (
+                <li key={evento.id} className="list-item">{evento.texto}</li>
+              ))}
+            </ul>
+          )}
           <div className="btn-row">
             {/* Referencia directa a la función */}
             <button type="button" className="btn" onClick={manejarClickSimple}>
@@ -56,6 +77,9 @@ export default function EventosYSeguridadXSS() {
               onClick={() => manejarConParametro('Exportar PDF')}
             >
               onClick=&#123;() =&gt; fn(arg)&#125;
+            </button>
+            <button type="button" className="btn btn-danger" onClick={() => setHistorialEventos([])}>
+              Limpiar historial
             </button>
           </div>
         </div>
@@ -84,6 +108,29 @@ export default function EventosYSeguridadXSS() {
           >
             {/* JSX escapa automáticamente esta cadena: NO se ejecuta el script */}
             Salida renderizada segura: {entradaUsuario}
+          </div>
+          <div className="btn-row">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => cargarPayload("<img src=x onerror=\"alert('XSS 1')\">")}
+            >
+              Cargar payload XSS de prueba 1
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => cargarPayload("<script>alert('XSS 2')</script>")}
+            >
+              Cargar payload XSS de prueba 2
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => cargarPayload('<svg onload="alert(\'XSS 3\')"></svg>')}
+            >
+              Cargar payload XSS de prueba 3
+            </button>
           </div>
         </div>
       </div>

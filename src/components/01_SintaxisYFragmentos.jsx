@@ -19,6 +19,9 @@ function EtiquetaInfo({ texto }) {
 }
 
 export default function SintaxisYFragmentos() {
+  const [nombreAlumno, setNombreAlumno] = useState('');
+  const nombreLimpio = nombreAlumno.trim();
+
   // Este bloque demuestra el uso de Fragment (<>...</>):
   // Si inspeccionas el DOM en el navegador (F12), verás que el Fragment
   // NO crea ningún <div> extra envolviendo las tarjetas.
@@ -44,19 +47,30 @@ export default function SintaxisYFragmentos() {
               type="text"
               className="input"
               placeholder="Ej.: Elena Martínez"
-              readOnly={false}
+              value={nombreAlumno}
+              onChange={(evento) => setNombreAlumno(evento.target.value)}
             />
+            {nombreLimpio.length > 0 && nombreLimpio.length < 3 && (
+              <p role="alert" style={{ color: '#ef4444', marginTop: '0.5rem' }}>
+                El nombre debe tener al menos 3 caracteres.
+              </p>
+            )}
+            {nombreLimpio.length >= 3 && (
+              <p className="box box-success" style={{ marginTop: '0.5rem' }}>
+                Bienvenido/a al portal, {nombreLimpio}
+              </p>
+            )}
           </div>
 
           <div className="box box-warn">
             <h3>Componentes en Mayúscula vs. HTML</h3>
-            <p style={{ marginBottom: '0.75rem', color: '#cbd5e1', fontSize: '0.9rem' }}>
+            <p style={{ marginBottom: '0.75rem', color: 'var(--text)', fontSize: '0.9rem' }}>
               Abajo renderizamos un componente propio <code className="code-inline">&lt;EtiquetaInfo /&gt;</code>:
             </p>
             <EtiquetaInfo texto="Componente con inicial Mayúscula" />
             <br />
             <br />
-            <small style={{ color: '#94a3b8' }}>
+            <small style={{ color: 'var(--muted)' }}>
               Nota: los saltos de línea anteriores usan <code className="code-inline">&lt;br /&gt;</code> cerrado.
             </small>
           </div>
@@ -70,4 +84,6 @@ export default function SintaxisYFragmentos() {
   );
 }
 
+
+import { useState } from 'react';
 

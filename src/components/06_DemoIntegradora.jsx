@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ResumenKPIs from './ResumenKPIs.jsx';
 
 // ============================================================================
@@ -17,6 +17,28 @@ const EXPEDIENTES_INICIALES = [
   { id: 102, nombre: 'Marcos Vega', nota: 4.3, modulos: ['DI', 'SGE'] },
   { id: 103, nombre: 'Sofía Navarro', nota: 9.5, modulos: ['DI', 'PSP', 'AD', 'PMDM'] }
 ];
+
+function leerExpedientesGuardados() {
+  try {
+    const guardados = localStorage.getItem('expedientes-dam2');
+    if (!guardados) return { expedientes: EXPEDIENTES_INICIALES, error: '' };
+
+    const expedientes = JSON.parse(guardados);
+    if (!Array.isArray(expedientes)) {
+      return {
+        expedientes: EXPEDIENTES_INICIALES,
+        error: 'Los datos guardados no tienen un formato válido; se muestran los datos iniciales.'
+      };
+    }
+
+    return { expedientes, error: '' };
+  } catch {
+    return {
+      expedientes: EXPEDIENTES_INICIALES,
+      error: 'No se pudieron leer los expedientes guardados; se muestran los datos iniciales.'
+    };
+  }
+}
 
 function TarjetaExpediente({ alumno, seleccionado, onSeleccionar }) {
   const aprobado = alumno.nota >= 5;
@@ -60,12 +82,23 @@ export default function DemoIntegradora() {
   const [seleccionado, setSeleccionado] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [orden, setOrden] = useState('nota-desc');
-  const [expedientes, setExpedientes] = useState(EXPEDIENTES_INICIALES);
+  const [cargaInicial] = useState(leerExpedientesGuardados);
+  const [expedientes, setExpedientes] = useState(cargaInicial.expedientes);
+  const [errorGuardado, setErrorGuardado] = useState('');
   const [formulario, setFormulario] = useState({
     nombre: '',
     nota: '',
     modulos: ''
   });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('expedientes-dam2', JSON.stringify(expedientes));
+      setErrorGuardado('');
+    } catch {
+      setErrorGuardado('No se pudieron guardar los expedientes en este navegador.');
+    }
+  }, [expedientes]);
 
   const listaFiltrada = expedientes
     .filter((alumno) => !soloAprobados || alumno.nota >= 5)
@@ -101,6 +134,17 @@ export default function DemoIntegradora() {
       { id: nuevoId, nombre, nota, modulos }
     ]);
     setFormulario({ nombre: '', nota: '', modulos: '' });
+  };
+
+  const restablecerDatos = () => {
+    try {
+      localStorage.removeItem('expedientes-dam2');
+      setExpedientes(EXPEDIENTES_INICIALES);
+      setSeleccionado(null);
+      setErrorGuardado('');
+    } catch {
+      setErrorGuardado('No se pudo restablecer el almacenamiento local.');
+    }
   };
 
   return (
@@ -167,10 +211,23 @@ export default function DemoIntegradora() {
           />
           <div className="btn-row">
             <button type="submit" className="btn">Dar de alta expediente</button>
+            <button type="button" className="btn btn-secondary" onClick={restablecerDatos}>
+              Restablecer datos iniciales
+            </button>
           </div>
         </form>
 
         <ResumenKPIs alumnos={listaFiltrada} />
+        {cargaInicial.error && (
+          <p role="alert" className="box box-warn" style={{ marginBottom: '1rem' }}>
+            {cargaInicial.error}
+          </p>
+        )}
+        {errorGuardado && (
+          <p role="alert" className="box box-warn" style={{ marginBottom: '1rem' }}>
+            {errorGuardado}
+          </p>
+        )}
 
         <div className="grid-2" style={{ marginBottom: '1rem' }}>
           <div>

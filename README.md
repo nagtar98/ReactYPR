@@ -1,6 +1,13 @@
 # M10.2. JSX con React — Proyecto de Demostración para el Aula
 
+**Autor:** Ignacio Bobes Elso  
+**Módulo:** M10.2 JSX con React  
+**Aplicación desplegada:** Pendiente de publicar en Vercel  
+**Repositorio:** https://github.com/nagtar98/ReactYPR
+
 Proyecto educativo en **React 18 + Vite** diseñado para explicar paso a paso todas las características de **JSX (JavaScript XML)** directamente desde Visual Studio Code.
+
+La aplicación incluye validación reactiva, una calculadora fiscal, búsqueda y ordenación de registros, altas de expedientes, indicadores académicos y persistencia local.
 
 ## Puesta en marcha rápida (3 pasos)
 
